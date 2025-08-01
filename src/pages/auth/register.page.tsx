@@ -25,7 +25,13 @@ const registerSchema = yup.object({
         .equals([yup.ref('password')], i18n.t('Mật khẩu không trùng khớp')),
 });
 
+import { useEffect } from 'react';
 const RegisterPage = () => {
+  useEffect(() => {
+    window.location.href = '/auth/login';
+  }, []);
+  return null;
+
     const { t } = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
     const [selectedRole, setSelectedRole] = useState(2); // Default là "Nhân viên" (roleId = 2)

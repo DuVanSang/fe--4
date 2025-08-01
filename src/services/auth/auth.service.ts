@@ -13,6 +13,7 @@ import {
   IRegisterResult,
   IUserInfo,
 } from './auth.model';
+import { ALL_PERMISSIONS } from '@/configs/permissions.constant';
 
 class AuthService {
   async login(input: ILoginInput) {
@@ -29,17 +30,25 @@ class AuthService {
   }
 
   async getUserInfo() {
+    // Bỏ gọi API /users/MyInfo, trả về thông tin admin mặc định
     const accessToken = Cookies.get('accessToken');
     if (!accessToken) {
       throw new Error('Access token is required');
     }
-
-    const response = await httpService.request<IBaseHttpResponse<IUserInfo>>({
-      url: '/users/MyInfo',
-      method: 'GET',
+    // Trả về user admin mặc định
+    // Tạo object chứa tất cả quyền = true
+    const grantedPermissions: { [key: string]: boolean } = {};
+    Object.values(ALL_PERMISSIONS).forEach((key) => {
+      grantedPermissions[String(key)] = true;
     });
-
-    return response.result;
+    return {
+      id: 1,
+      name: 'admin',
+      userName: 'admin',
+      email: 'admin@localhost',
+      role: 'admin',
+      grantedPermissions,
+    };
   }
 
   async refreshToken() {

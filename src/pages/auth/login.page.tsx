@@ -43,7 +43,13 @@ const LoginPage = () => {
   });
 
   const { mutate, isLoading: loginLoading } = useMutation({
-    mutationFn: (data: ILoginInput) => authService.login(data),
+    mutationFn: (data: ILoginInput) => {
+      // Chỉ cho phép đăng nhập với username admin
+      if (data.name !== 'admin') {
+        return Promise.reject({ response: { data: { message: 'Chỉ admin mới được đăng nhập!' } } });
+      }
+      return authService.login(data);
+    },
     onSuccess: (data) => {
       dispatch({ type: 'setIsAuth', payload: true });
       dispatch({ type: 'setCurrentUser', payload: data });
@@ -126,9 +132,7 @@ const LoginPage = () => {
             <Typography variant="h4">{t('Đăng nhập')}</Typography>
             <Typography color="text.secondary" variant="subtitle2">
               {t('Chưa có tài khoản') + '? '}
-              <Link href="/auth/register" underline="hover" variant="subtitle2">
-                {t('Đăng ký ngay')}
-              </Link>
+              {/* Đã ẩn link đăng ký tài khoản mới */}
             </Typography>
             <SelectChangeLocale
               buttonProps={{
